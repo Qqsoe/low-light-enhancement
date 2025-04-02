@@ -4,7 +4,6 @@ import torchvision
 import torch.backends.cudnn as cudnn
 import torch.optim
 import torch.nn.functional as F
-
 import os
 import sys
 import argparse
@@ -14,10 +13,8 @@ import cv2
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from torchvision.models import vgg16
-
 from data_loaders.lol import lowlight_loader
-from model.IAT_main import IAT
-
+from model.LFT_main import LFT
 from IQA_pytorch import SSIM
 from utils import PSNR, adjust_learning_rate, validation, LossNetwork, visualization
 
@@ -46,7 +43,7 @@ if not os.path.exists(config.snapshots_folder):
     os.makedirs(config.snapshots_folder)
 
 # Model Setting
-model = IAT(type=config.model_type).cuda()
+model = LFT(type=config.model_type).cuda()
 if config.pretrain_dir is not None:
     model.load_state_dict(torch.load(config.pretrain_dir))
 

@@ -1,18 +1,18 @@
 import pywt
 import pywt.data
 import torch
+import os
+import math
 from matplotlib import pyplot as plt
 from torch import nn
 from torch.autograd import Function
 import torch.nn.functional as F
-import math
 from einops.layers.torch import Rearrange
 import numpy as np
 import torch.nn.functional as F
-import os
 from timm.models.layers import trunc_normal_
-from model.blocks import CBlock_ln, SwinTransformerBlock
-from model.global_net import Global_pred
+from model.detail import SwinTransformerBlock, RDE
+from model.correction_net import Correct_net
 import torchvision.transforms as transforms
 
 
@@ -369,11 +369,11 @@ class Local_pred_S(nn.Module):
         self.relu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
         self.conv2 = nn.Conv2d(3, 3, kernel_size=3, padding=1)
         # main blocks
-        block = CBlock_ln(dim)
+        block = RDE(dim)
         block_t = SwinTransformerBlock(dim)  # head number
         if type == 'ccc':
-            blocks1 = [CBlock_ln(16, drop_path=0.01)]
-            blocks2 = [CBlock_ln(16, drop_path=0.01)]
+            blocks1 = [RDE(16, drop_path=0.01)]
+            blocks2 = [RDE(16, drop_path=0.01)]
         elif type == 'ttt':
             blocks1, blocks2 = [block_t for _ in range(number)], [block_t for _ in range(number)]
         elif type == 'cct':
@@ -408,7 +408,6 @@ class Local_pred_S(nn.Module):
     def forward(self, img):
 
         img1 = self.relu(self.conv1(img))
-
         img2 = self.herb(img1)
 
         mul = self.mul_blocks(img2) + img2
@@ -419,15 +418,15 @@ class Local_pred_S(nn.Module):
         return mul, add, img2
 
 
-class IAT(nn.Module):
+class LFT(nn.Module):
     def __init__(self, in_dim=3, with_global=True, type='lol'):
-        super(IAT, self).__init__()
+        super(LFT, self).__init__()
 
 
         self.local_net = Local_pred_S(in_dim=in_dim)
         self.with_global = with_global
         if self.with_global:
-            self.global_net = Global_pred(in_channels=in_dim, type=type)
+            self.global_net = Correct_net(in_channels=in_dim, type=type)
 
     def apply_color(self, image, ccm):
         shape = image.shape
@@ -459,6 +458,6 @@ class IAT(nn.Module):
 if __name__ == "__main__":
     os.environ['CUDA_VISIBLE_DEVICES'] = '3'
     img = torch.Tensor(1, 3, 400, 600)
-    net = IAT()
+    net = LFT()
     print('total parameters:', sum(param.numel() for param in net.parameters()))
     _, _, high = net(img)

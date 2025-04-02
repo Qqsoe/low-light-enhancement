@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.optim
 import torch.nn.functional as F
-
 import os
 import argparse
 import numpy as np
@@ -13,7 +12,7 @@ from torch.utils.data.distributed import DistributedSampler
 from torch import distributed as dist
 
 from data_loaders.exposure import exposure_loader
-from model.IAT_main import IAT
+from model.LFT_main import LFT
 
 from IQA_pytorch import SSIM
 from utils import PSNR, validation, LossNetwork, visualization, get_dist_info
@@ -58,7 +57,7 @@ torch.manual_seed(seed)
 torch.cuda.manual_seed_all(seed)
 
 # Model Setting
-model = IAT(type='exp').cuda()
+model = LFT(type='exp').cuda()
 if config.pretrain_dir is not None:
     model.load_state_dict(torch.load(config.pretrain_dir), strict=False)
 

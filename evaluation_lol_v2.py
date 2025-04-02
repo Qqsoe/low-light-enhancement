@@ -9,7 +9,7 @@ import os
 import argparse
 import numpy as np
 from utils import PSNR, validation, LossNetwork
-from model.IAT_main import IAT
+from model.LFT_main import LFT
 from IQA_pytorch import SSIM, MS_SSIM
 from data_loaders.lol import lowlight_loader
 from tqdm import tqdm
@@ -26,7 +26,7 @@ val_dataset = lowlight_loader(images_path=config.img_val_path, mode='test', norm
 val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=1, shuffle=False, num_workers=8, pin_memory=True)
 os.environ['CUDA_VISIBLE_DEVICES'] = str(config.gpu_id)
 
-model = IAT().cuda()
+model = LFT().cuda()
 model.load_state_dict(torch.load("./workdirs/snapshots_folder_lol/best_Epoch.pth"))
 model.eval()
 

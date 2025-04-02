@@ -2,11 +2,11 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import imp
 from timm.models.layers import trunc_normal_, DropPath, to_2tuple
 import os
-from model.blocks import Mlp
-class CAFM(nn.Module):  # Cross Attention Fusion Module
+from model.detail import Mlp
+
+class CAFM(nn.Module):
     def __init__(self):
         super(CAFM, self).__init__()
 
@@ -139,9 +139,6 @@ class query_SABlock(nn.Module):
 
     def forward(self, x):
         x = x+ self.pos_embed(x)
-        #############################
-
-        ##############################
         x = x.flatten(2).transpose(1, 2)
         x = self.drop_path(self.attn(self.norm1(x)))
         x = x + self.drop_path(self.mlp(self.norm2(x)))
@@ -191,9 +188,9 @@ class conv_embedding(nn.Module):
        return x
 
 
-class Global_pred(nn.Module):
+class Correct_net(nn.Module):
     def __init__(self, in_channels=3, out_channels=64, num_heads=4, type='exp'):
-        super(Global_pred, self).__init__()
+        super(Correct_net, self).__init__()
         if type == 'exp':
             self.gamma_base = nn.Parameter(torch.ones((1)), requires_grad=False) # False in exposure correction
         else:
@@ -232,8 +229,8 @@ class Global_pred(nn.Module):
 
 
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES']='3'
+    os.environ['CUDA_VISIBLE_DEVICES']='1'
     img = torch.Tensor(8, 3, 400, 600)
-    global_net = Global_pred()
+    global_net = Correct_net()
     gamma, color = global_net(img)
     print(gamma.shape, color.shape)

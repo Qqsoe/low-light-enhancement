@@ -16,7 +16,7 @@ from tqdm import tqdm
 from torchvision.models import vgg16
 
 from data_loaders.lol_v1_new import lowlight_loader_new
-from model.IAT_main import IAT
+from model.LFT_main import LFT
 
 from IQA_pytorch import SSIM
 from utils import PSNR, adjust_learning_rate, validation, LossNetwork, visualization
@@ -44,7 +44,7 @@ if not os.path.exists(config.snapshots_folder):
     os.makedirs(config.snapshots_folder)
 
 # Model Setting
-model = IAT().cuda()
+model = LFT().cuda()
 if config.pretrain_dir is not None:
     model.load_state_dict(torch.load(config.pretrain_dir))
 

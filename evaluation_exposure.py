@@ -4,12 +4,11 @@ import torchvision
 import torch.backends.cudnn as cudnn
 import torch.optim
 import torch.nn.functional as F
-
 import os
 import argparse
 import numpy as np
 from utils import PSNR, validation, LossNetwork
-from model.IAT_main import IAT
+from model.LFT_main import LFT
 from IQA_pytorch import SSIM, MS_SSIM
 from data_loaders.exposure import exposure_loader
 from tqdm import tqdm
@@ -27,7 +26,7 @@ test_dataset = exposure_loader(images_path=config.img_val_path, mode='test',  ex
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=8, pin_memory=True)
 os.environ['CUDA_VISIBLE_DEVICES'] = str(config.gpu_id)
 
-model = IAT(type='exp').cuda()
+model = LFT(type='exp').cuda()
 
 
 model.load_state_dict(torch.load("./workdirs/snapshots_folder_exposure/best_Epoch.pth1"))

@@ -6,7 +6,7 @@ import warnings
 import torchvision
 import numpy as np
 from utils import PSNR, validation, LossNetwork
-from model.IAT_main import IAT
+from model.LFT_main import LFT
 from torchvision.transforms import Normalize
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -24,7 +24,7 @@ enhance_pretrain = r'./workdirs/snapshots_folder_lol_v1_whole/best_Epoch(lol_v1)
 normalize_process = Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 
 ## Load Pre-train Weights
-model = IAT().cuda()
+model = LFT().cuda()
 if config.task == 'exposure':
     model.load_state_dict(torch.load(exposure_pretrain))
 elif config.task == 'enhance':
