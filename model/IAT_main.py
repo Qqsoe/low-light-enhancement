@@ -372,7 +372,7 @@ class Local_pred_S(nn.Module):
         block = CBlock_ln(dim)
         block_t = SwinTransformerBlock(dim)  # head number
         if type == 'ccc':
-            blocks1 = [CBlock_ln(16, drop_path=0.01), ]
+            blocks1 = [CBlock_ln(16, drop_path=0.01)]
             blocks2 = [CBlock_ln(16, drop_path=0.01)]
         elif type == 'ttt':
             blocks1, blocks2 = [block_t for _ in range(number)], [block_t for _ in range(number)]
@@ -422,7 +422,7 @@ class Local_pred_S(nn.Module):
 class IAT(nn.Module):
     def __init__(self, in_dim=3, with_global=True, type='lol'):
         super(IAT, self).__init__()
-        # self.local_net = Local_pred()
+
 
         self.local_net = Local_pred_S(in_dim=in_dim)
         self.with_global = with_global
@@ -438,9 +438,9 @@ class IAT(nn.Module):
 
     def forward(self, img_low):
 
-        mul, add, img2 = self.local_net(img_low)
+        mul, add, img2 = self.local_net
         img_high = (img_low.mul(mul)).add(add)
-        return mul, add, img_high
+
 
         if not self.with_global:
             return mul, add, img_high
