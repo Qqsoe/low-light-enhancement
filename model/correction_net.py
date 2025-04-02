@@ -146,27 +146,7 @@ class query_SABlock(nn.Module):
 
 
 class conv_embedding(nn.Module):
-    def visualize_feature_maps(self, feature_maps):
-        """
-        可视化卷积层输出的特征图
-        """
-        # 确保从 GPU 转移到 CPU，并转换为 NumPy 数组
-        feature_map_data_list = [feature_maps[0, i].detach().cpu().numpy() for i in range(feature_maps.shape[1])]
-        feature_map_data_list = feature_map_data_list[:3]
-        num_features = len(feature_map_data_list)
-        cols = 4  # 每行显示4个特征图
-        rows = (num_features + cols - 1) // cols  # 计算总行数
 
-        # 调整图像大小，增大图片尺寸
-        plt.figure(figsize=(8, 4 * rows))  # 增大整体图片
-        for i, feature_map_data in enumerate(feature_map_data_list):
-            plt.subplot(1, len(feature_map_data_list), i + 1)
-            plt.imshow(feature_map_data, cmap="Blues")
-            plt.title(f"{i + 1}")
-
-            plt.axis('off')
-        plt.tight_layout()
-        plt.show()
     def __init__(self, in_channels, out_channels):
         super(conv_embedding, self).__init__()
         self.proj = nn.Sequential(
